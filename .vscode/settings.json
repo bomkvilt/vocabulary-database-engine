@@ -1,0 +1,26 @@
+{
+    "flake8.args": [
+        "--ignore=W501",
+        "--ignore=E501",
+    ],
+    "python.analysis.diagnosticSeverityOverrides": {
+        "reportMissingTypeStubs": "information",
+        "reportUnknownMemberType": "information",
+        "reportUnknownVariableType": "information",
+    },
+    "jupyter.kernels.filter": [
+        {
+            "path": "c:\\Users\\bomkvilt\\AppData\\Local\\Programs\\Python\\Python39\\python.exe",
+            "type": "pythonEnvironment"
+        }
+    ],
+    "isort.args": [
+        "--profile", "black"
+    ],
+    
+
+    "files.exclude": {
+        // local site-packages
+        ".venv/Lib/*": true,
+    }
+}
