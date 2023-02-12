@@ -9,6 +9,8 @@ from ipywidgets import widgets
 _T1 = TypeVar("_T1")
 _T2 = TypeVar("_T2")
 
+_AW1 = TypeVar("_AW1", bound=widgets.Widget)
+
 
 @dataclasses.dataclass(kw_only=True)
 class ElementConfig:
@@ -23,7 +25,8 @@ class ElementBase(abc.ABC):
     def get_widget(self) -> widgets.Widget:
         pass
 
-    def _wrap_element(self, widget: widgets.Widget) -> widgets.Widget:
+    def _wrap_element(self, widget: _AW1) -> _AW1:
+        assert isinstance(widget, widgets.Widget)
         if self.config.show_debug_frames:
             self.__feature_add_border(widget)
 
@@ -51,8 +54,8 @@ class ValueChangeInfo:
 
 
 @dataclasses.dataclass(kw_only=True)
-class ChangableWidget(ElementBase):
-    widget: widgets.Widget
+class ChangableWidget(ElementBase, Generic[_AW1]):
+    widget: _AW1
 
     def __post_init__(self) -> None:
         self._wrap_element(self.widget)

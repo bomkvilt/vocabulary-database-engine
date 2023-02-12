@@ -20,7 +20,7 @@ class WordInputCard(ElementBase):
             widgets.Label("Word form card:")
         )
 
-        self.__word = ChangableWidget(
+        self.__word = ChangableWidget[widgets.Text](
             config=self.config,
             widget=widgets.Text(
                 value="",
@@ -33,7 +33,7 @@ class WordInputCard(ElementBase):
             ),
         ).add_callback(self.__on_word_chaged)
 
-        self.__form = ChangableWidget(
+        self.__form = ChangableWidget[widgets.Text](
             config=self.config,
             widget=widgets.Text(
                 value="",
