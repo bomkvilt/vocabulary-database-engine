@@ -1,8 +1,14 @@
 import dataclasses
+from typing import Optional
 
 from ipywidgets import widgets
 
-from .element_base import ChangableWidget, ElementBase, ValueChangeInfo
+from .element_base import (
+    ChangableWidget,
+    ElementBase,
+    ValueChangeInfo,
+    element_property,
+)
 
 
 @dataclasses.dataclass(kw_only=True)
@@ -10,11 +16,11 @@ class WordInputCard(ElementBase):
     def __post_init__(self):
         DEFAULT_TEXT_WIDTH = "99%"
 
-        self.__word_card_title = self._wrap_element(
+        self.__title = self._wrap_element(
             widgets.Label("Word form card:")
         )
 
-        self.__word_card_word = ChangableWidget(
+        self.__word = ChangableWidget(
             config=self.config,
             widget=widgets.Text(
                 value="",
@@ -24,11 +30,10 @@ class WordInputCard(ElementBase):
                 layout={
                     "width": DEFAULT_TEXT_WIDTH,
                 },
-            )
-        )
-        self.__word_card_word.add_callback(self.__on_word_chaged)
+            ),
+        ).add_callback(self.__on_word_chaged)
 
-        self.__word_card_form = ChangableWidget(
+        self.__form = ChangableWidget(
             config=self.config,
             widget=widgets.Text(
                 value="",
@@ -38,11 +43,10 @@ class WordInputCard(ElementBase):
                 layout={
                     "width": DEFAULT_TEXT_WIDTH,
                 },
-            )
-        )
-        self.__word_card_form.add_callback(self.__on_form_chaged)
+            ),
+        ).add_callback(self.__on_form_chaged)
 
-        self.__word_card_description = self._wrap_element(
+        self.__description = self._wrap_element(
             widgets.Text(
                 value="",
                 placeholder="Start to type a word description here",
@@ -54,7 +58,7 @@ class WordInputCard(ElementBase):
             )
         )
 
-        self.__word_card_submit_word = self._wrap_element(
+        self.__submit_word = self._wrap_element(
             widgets.Button(
                 button_style="",
                 description="submit the word form",
@@ -63,7 +67,7 @@ class WordInputCard(ElementBase):
                 icon="check"
             )
         )
-        self.__word_card_delete_word = self._wrap_element(
+        self.__delete_word = self._wrap_element(
             widgets.Button(
                 button_style="danger",
                 description="delete the word form",
@@ -73,26 +77,48 @@ class WordInputCard(ElementBase):
             )
         )
 
-        self.__word_card_layout = self._wrap_element(
+        self.__layout = self._wrap_element(
             widgets.VBox([
-                self.__word_card_title,
-                self.__word_card_word,
-                self.__word_card_form,
-                self.__word_card_description,
+                self.__title,
+                self.__word.get_widget(),
+                self.__form.get_widget(),
+                self.__description,
                 widgets.HBox([
-                    self.__word_card_submit_word,
-                    self.__word_card_delete_word,
+                    self.__submit_word,
+                    self.__delete_word,
                 ]),
             ])
         )
 
     def get_widget(self) -> widgets.Widget:
-        return self.__word_card_layout
+        return self.__layout
 
-    def __on_word_chaged(self, info: ValueChangeInfo) -> None:
-        # TODO: choose a word sudgestion mode
-        print(info)
+    # ------------------| interface
 
-    def __on_form_chaged(self, info: ValueChangeInfo) -> None:
-        # TODO: choose a word form sudgestion mode
-        print(info)
+    @element_property
+    def word(self) -> str:
+        value = self.__word.value
+        assert isinstance(value, str)
+        return value
+
+    @word.setter
+    def _(self, new_value: str, couser: ElementBase) -> None:
+        self.__word.set_value(new_value, couser)
+
+    @element_property
+    def form(self) -> str:
+        value = self.__form.value
+        assert isinstance(value, str)
+        return value
+
+    @form.setter
+    def _(self, new_value: str, couser: ElementBase) -> None:
+        self.__form.set_value(new_value, couser)
+
+    # ------------------| callbacks
+
+    def __on_word_chaged(self, info: ValueChangeInfo, couser: Optional[ElementBase]) -> None:
+        self.word.broadcast(couser)
+
+    def __on_form_chaged(self, info: ValueChangeInfo, couser: Optional[ElementBase]) -> None:
+        self.form.broadcast(couser)
