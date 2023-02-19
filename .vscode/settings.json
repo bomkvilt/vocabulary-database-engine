@@ -21,6 +21,6 @@
 
     "files.exclude": {
         // local site-packages
-        ".venv/Lib/*": true,
+        ".venv/Lib/site-packages/*": true,
     }
 }

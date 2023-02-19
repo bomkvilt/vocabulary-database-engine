@@ -1,5 +1,5 @@
-from . import new_word_protocol
+from . import words_databse_protocol
 
 __all__ = [
-    "new_word_protocol",
+    "words_databse_protocol",
 ]

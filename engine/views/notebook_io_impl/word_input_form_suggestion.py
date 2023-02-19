@@ -14,7 +14,7 @@ _EMPTY_VALUE = ""
 
 
 @dataclasses.dataclass(kw_only=True)
-class WordInputSudgestion(ElementBase):
+class WordInputSuggestion(ElementBase):
     def __post_init__(self):
         DEFAULT_TEXT_WIDTH = "99%"
 

@@ -3,6 +3,8 @@ from typing import Optional
 
 from ipywidgets import widgets
 
+from engine.core.protocols import words_databse_protocol
+
 from .element_base import (
     ChangableWidget,
     ElementBase,
@@ -46,8 +48,9 @@ class WordInputCard(ElementBase):
             ),
         ).add_callback(self.__on_form_chaged)
 
-        self.__description = self._wrap_element(
-            widgets.Text(
+        self.__description = ChangableWidget[widgets.Text](
+            config=self.config,
+            widget=widgets.Text(
                 value="",
                 placeholder="Start to type a word description here",
                 description="Description:",
@@ -67,6 +70,8 @@ class WordInputCard(ElementBase):
                 icon="check"
             )
         )
+        self.__submit_word.on_click(self.__on_word_submit)
+
         self.__delete_word = self._wrap_element(
             widgets.Button(
                 button_style="danger",
@@ -76,13 +81,14 @@ class WordInputCard(ElementBase):
                 icon="check"
             )
         )
+        self.__delete_word.on_click(self.__on_word_delete)
 
         self.__layout = self._wrap_element(
             widgets.VBox([
                 self.__title,
                 self.__word.get_widget(),
                 self.__form.get_widget(),
-                self.__description,
+                self.__description.get_widget(),
                 widgets.HBox([
                     self.__submit_word,
                     self.__delete_word,
@@ -115,6 +121,22 @@ class WordInputCard(ElementBase):
     def _(self, new_value: str, couser: ElementBase) -> None:
         self.__form.set_value(new_value, couser)
 
+    @element_property
+    def on_word_submit(self) -> words_databse_protocol.WordFormInfo:
+        return words_databse_protocol.WordFormInfo(
+            description=self.__description.value,
+            form=self.__form.value,
+            word=self.__word.value,
+        )
+
+    @element_property
+    def on_word_delete(self) -> words_databse_protocol.WordFormInfo:
+        return words_databse_protocol.WordFormInfo(
+            description=self.__description.value,
+            form=self.__form.value,
+            word=self.__word.value,
+        )
+
     # ------------------| callbacks
 
     def __on_word_chaged(self, info: ValueChangeInfo, couser: Optional[ElementBase]) -> None:
@@ -122,3 +144,9 @@ class WordInputCard(ElementBase):
 
     def __on_form_chaged(self, info: ValueChangeInfo, couser: Optional[ElementBase]) -> None:
         self.form.broadcast(couser)
+
+    def __on_word_submit(self, button: widgets.Widget) -> None:
+        self.on_word_submit.broadcast(self)
+
+    def __on_word_delete(self, button: widgets.Widget) -> None:
+        self.on_word_delete.broadcast(self)
