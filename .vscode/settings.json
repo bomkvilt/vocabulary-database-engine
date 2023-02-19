@@ -8,12 +8,6 @@
         "reportUnknownMemberType": "information",
         "reportUnknownVariableType": "information",
     },
-    "jupyter.kernels.filter": [
-        {
-            "path": "c:\\Users\\bomkvilt\\AppData\\Local\\Programs\\Python\\Python39\\python.exe",
-            "type": "pythonEnvironment"
-        }
-    ],
     "isort.args": [
         "--profile", "black"
     ],
